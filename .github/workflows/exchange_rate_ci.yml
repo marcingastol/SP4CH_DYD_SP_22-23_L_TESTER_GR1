@@ -49,3 +49,31 @@ jobs:
           -Dsonar.python.coverage.reportPaths=coverage.xml \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=$SONAR_TOKEN
+
+    - name: Install linting and formatting dependencies
+      run: |
+        pip install flake8 black
+
+    - name: Run linting
+      run: |
+        flake8 'T9/Exchange rate/app/' 'T9/Exchange rate/tests/'
+
+    - name: Run code formatting
+      run: |
+        black --check 'T9/Exchange rate/app/' 'T9/Exchange rate/tests/'
+
+    - name: Install static type checking dependencies
+      run: |
+        pip install mypy
+
+    - name: Run static type checking
+      run: |
+        mypy 'T9/Exchange rate/app/' 'T9/Exchange rate/tests/'
+    
+    - name: Install security checking dependencies
+      run: |
+        pip install bandit
+
+    - name: Run security checks
+      run: |
+        bandit -r 'T9/Exchange rate/app/'
