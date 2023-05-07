@@ -29,4 +29,23 @@ jobs:
       run: |
         cd 'T9/Exchange rate'
         set PYTHONPATH="${PYTHONPATH}:$(pwd)"
-        pytest tests/
+        pytest tests/ -v
+
+    - name: Install SonarQube scanner
+      run: |
+        wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+        unzip sonar-scanner-cli-4.6.2.2472-linux.zip
+        sudo ln -s $GITHUB_WORKSPACE/sonar-scanner-4.6.2.2472-linux/bin/sonar-scanner /usr/local/bin/sonar-scanner
+
+    - name: Run SonarQube analysis
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        sonar-scanner \
+          -Dsonar.projectKey='marcingastol_SP4CH_DYD_SP_22-23_L_TESTER_GR1' \
+          -Dsonar.organization='marcingastol-t9' \
+          -Dsonar.sources='Password Manager/app/' \
+          -Dsonar.tests='Password Manager/tests/' \
+          -Dsonar.python.coverage.reportPaths=coverage.xml \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=$SONAR_TOKEN
